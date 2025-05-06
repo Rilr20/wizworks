@@ -92,6 +92,14 @@ app.MapPost("/square/create",(object requestBody) => {
 });
 
 app.MapPost("/square/destroy", () => {
+    var filePath = "squares.json";
+    if (File.Exists(filePath))
+    {
+        File.Delete(filePath);
+        return Results.Ok("Deleted successfully.");
+    }
+
+    return Results.NotFound("File not found.");
 });
 
 app.Run();
