@@ -24,7 +24,12 @@ void SaveToDisk(object data)
     var newJson = JsonSerializer.Serialize(allData, new JsonSerializerOptions { WriteIndented = true });
     File.WriteAllText(filePath, newJson);
 }
+List<Object> getFromDisk() {
+    var filePath = "squares.json";
+    var existingJson = File.ReadAllText(filePath);
 
+    return JsonSerializer.Deserialize<List<object>>(existingJson) ?? new List<object>();
+}
 app.MapPost("/square/create",(object requestBody) => {
     /**
     - Varje ruta får en slumpmässig färg som inte är samma som föregående ruta.
@@ -34,8 +39,8 @@ app.MapPost("/square/create",(object requestBody) => {
     {
         return Results.BadRequest(new { error = "Invalid JSON format." });
     }
-    string squarePos = json.GetProperty("square").GetString();
-    string color = json.GetProperty("color").GetString();
+    string squarePos = json.GetProperty("square").GetString() ?? "0,0";
+    string color = json.GetProperty("color").GetString() ?? "ffffff";
     int x = 0, y = 0;
 
     if (!string.IsNullOrWhiteSpace(squarePos) && squarePos.Contains(','))
@@ -85,10 +90,12 @@ app.MapPost("/square/create",(object requestBody) => {
         number = random.Next(0, 16777215);
         numb = number.ToString("x6");
 
-    } while (numb == color);
-    SaveToDisk( new { square = $"{x},{y}", color = numb });
+    } while ("#"+numb == color);
+    SaveToDisk( new { square = $"{x},{y}", color = "#" +numb });
 
-    return Results.Json(new { square = $"{x},{y}", color = numb });
+    return Results.Ok(getFromDisk());
+    // return Results.Json(new { square = $"{x},{y}", color = "#" + numb });
+
 });
 
 app.MapPost("/square/destroy", () => {
