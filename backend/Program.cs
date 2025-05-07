@@ -34,12 +34,21 @@ app.MapPost("/square/create",(object requestBody) => {
     Random random = new Random();
     int number;
     string numb;
-    if (requestBody is not JsonElement json)
+    string squarePos;
+    string color;
+    // if (requestBody is not JsonElement json)
+    // {
+    //     return Results.BadRequest(new { error = "Invalid JSON format." });
+    // }
+    try
     {
-        return Results.BadRequest(new { error = "Invalid JSON format." });
+        squarePos = json.GetProperty("square").GetString() ?? "0,0";
+        color = json.GetProperty("color").GetString() ?? "ffffff";
     }
-    string squarePos = json.GetProperty("square").GetString() ?? "0,0";
-    string color = json.GetProperty("color").GetString() ?? "ffffff";
+    catch (System.Exception)
+    {
+        return Results.BadRequest(new { error = "Missing or invalid properties in request body." });
+    }
     int x = 0, y = 0;
 
 
