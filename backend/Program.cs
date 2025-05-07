@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Helper;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,36 +17,10 @@ app.UseCors("AllowLocalhost3000");
 
 app.MapGet("/", () => "Hello World!");
 
-void SaveToDisk(object data)
-{
-    List<object> allData;
-    var filePath = "squares.json";
-    var jsonData = JsonSerializer.Serialize(data);
-
-    if (File.Exists(filePath))
-    {
-        var existingJson = File.ReadAllText(filePath);
-        allData = JsonSerializer.Deserialize<List<object>>(existingJson) ?? new List<object>();
-    }
-    else
-    {
-        allData = new List<object>();
-    }
-
-    allData.Add(data);
-    var newJson = JsonSerializer.Serialize(allData, new JsonSerializerOptions { WriteIndented = true });
-    File.WriteAllText(filePath, newJson);
-}
-List<Object> getFromDisk() {
-    var filePath = "squares.json";
-    var existingJson = File.ReadAllText(filePath);
-
-    return JsonSerializer.Deserialize<List<object>>(existingJson) ?? new List<object>();
-}
 
 app.MapGet("/squares", () => {
     if (File.Exists("squares.json")) {
-        return Results.Ok(getFromDisk());
+        return Results.Ok(Helper.getFromDisk());
     } else {
         return Results.BadRequest(new { error = "File is not created" });
 
@@ -75,19 +50,12 @@ app.MapPost("/square/create",(object requestBody) => {
         int.TryParse(parts[0], out x);
         int.TryParse(parts[1], out y);
     } else {
-        // return Results.BadRequest(new { error = "Invalid JSON format." });
-        do
-        {
-            number = random.Next(0, 16777215);
-            numb = number.ToString("x6");
-
-        } while ("#" + numb == color);
-        SaveToDisk(new { square = $"{x},{y}", color = "#" + numb });
-
-        // return Results.Ok(getFromDisk()); //Dumt att skicka all data hela tiden oskalbart
         number = random.Next(0, 16777215);
         numb = number.ToString("x6");
-        SaveToDisk(new { square = $"{x},{y}", color = "#" + numb });
+
+        number = random.Next(0, 16777215);
+        numb = number.ToString("x6");
+        Helper. SaveToDisk(new { square = $"{x},{y}", color = "#" + numb });
 
         return Results.Json(new { square = $"{x},{y}", color = "#" + numb });
     }
@@ -128,7 +96,7 @@ app.MapPost("/square/create",(object requestBody) => {
         numb = number.ToString("x6");
 
     } while ("#"+numb == color);
-    SaveToDisk( new { square = $"{x},{y}", color = "#" +numb });
+    Helper.SaveToDisk( new { square = $"{x},{y}", color = "#" +numb });
 
     // return Results.Ok(getFromDisk()); //Dumt att skicka all data hela tiden oskalbart
     return Results.Json(new { square = $"{x},{y}", color = "#" + numb }); //Om man laddar om sidan så försvinner de tidigare rutornar (bra eler dåligt?)
