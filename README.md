@@ -37,6 +37,7 @@ Each square is saved as a JSON object with this format:
 # 🛠 How to Run
 
 ## Backend
+uses port `5019`
 
 ```
 cd backend
@@ -44,6 +45,7 @@ dotnet run
 ```
 
 ## Frontend
+uses port `3000`
 
 ```
 cd frontend
