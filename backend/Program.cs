@@ -1,6 +1,18 @@
 using System.Text.Json;
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowLocalhost3000", policy =>
+        policy.WithOrigins("http://localhost:3000")
+              .AllowAnyHeader()
+              .AllowAnyMethod());
+});
+
 var app = builder.Build();
+
+app.UseCors("AllowLocalhost3000");
 
 app.MapGet("/", () => "Hello World!");
 
@@ -30,11 +42,24 @@ List<Object> getFromDisk() {
 
     return JsonSerializer.Deserialize<List<object>>(existingJson) ?? new List<object>();
 }
+
+app.MapGet("/squares", () => {
+    if (File.Exists("squares.json")) {
+        return Results.Ok(getFromDisk());
+    } else {
+        return Results.BadRequest(new { error = "File is not created" });
+
+    }
+});
+
 app.MapPost("/square/create",(object requestBody) => {
     /**
     - Varje ruta får en slumpmässig färg som inte är samma som föregående ruta.
     - Position och färg på varje ruta skickas till API:et som sparar dessa värden till disk i JSON-format.
     - När sidan laddas om, hämtar webbsidan den senaste layouten från API:et och återställer de genererade rutorna. */
+    Random random = new Random();
+    int number;
+    string numb;
     if (requestBody is not JsonElement json)
     {
         return Results.BadRequest(new { error = "Invalid JSON format." });
@@ -43,13 +68,28 @@ app.MapPost("/square/create",(object requestBody) => {
     string color = json.GetProperty("color").GetString() ?? "ffffff";
     int x = 0, y = 0;
 
+
     if (!string.IsNullOrWhiteSpace(squarePos) && squarePos.Contains(','))
     {
         var parts = squarePos.Split(',');
         int.TryParse(parts[0], out x);
         int.TryParse(parts[1], out y);
     } else {
-        return Results.BadRequest(new { error = "Invalid JSON format." });
+        // return Results.BadRequest(new { error = "Invalid JSON format." });
+        do
+        {
+            number = random.Next(0, 16777215);
+            numb = number.ToString("x6");
+
+        } while ("#" + numb == color);
+        SaveToDisk(new { square = $"{x},{y}", color = "#" + numb });
+
+        // return Results.Ok(getFromDisk()); //Dumt att skicka all data hela tiden oskalbart
+        number = random.Next(0, 16777215);
+        numb = number.ToString("x6");
+        SaveToDisk(new { square = $"{x},{y}", color = "#" + numb });
+
+        return Results.Json(new { square = $"{x},{y}", color = "#" + numb });
     }
 
     /**
@@ -83,9 +123,6 @@ app.MapPost("/square/create",(object requestBody) => {
     }
 
 
-    Random random = new Random();
-    int number;
-    string numb;
     do {
         number = random.Next(0, 16777215);
         numb = number.ToString("x6");
@@ -93,8 +130,8 @@ app.MapPost("/square/create",(object requestBody) => {
     } while ("#"+numb == color);
     SaveToDisk( new { square = $"{x},{y}", color = "#" +numb });
 
-    return Results.Ok(getFromDisk());
-    // return Results.Json(new { square = $"{x},{y}", color = "#" + numb });
+    // return Results.Ok(getFromDisk()); //Dumt att skicka all data hela tiden oskalbart
+    return Results.Json(new { square = $"{x},{y}", color = "#" + numb }); //Om man laddar om sidan så försvinner de tidigare rutornar (bra eler dåligt?)
 
 });
 
