@@ -1,53 +1,52 @@
-# Wizardworks: Programmeringsuppgift
+# Grid Square Generator
 
-Se PDF för mer detaljerad vy över flödesdiagram etc. [PDF](https://github.com/Wizardworks-AB/programmeringsuppgift/blob/master/Wizardworks%20-%20programmeringsuppgift.pdf)
+This is a full-stack project with a RESTful backend in ASP.NET Core and a React frontend. The application displays colored squares on a grid. Each square is generated with a unique color and saved along with its position. The grid state persists between reloads using a local JSON file.
 
-## Uppgift
+## 🔧 Backend – ASP.NET Core Web API
 
-Skapa en webbsida som genererar potentiellt oändligt med kvadrater i en kvadratisk form. För varje knapptryckning på "Lägg till ruta" ska en ny ruta läggas till, och färgen på rutan ska slumpas fram (dock aldrig samma färg som föregående ruta).
+### 📦 Endpoints
 
-### Funktionalitet
+- `GET /`  
+  Health check – returns `"Hello World!"`.
 
-1. **Frontend**:
-    - Byggs med React.js.
-    - Inget krav på CSS-ramverk, men TailwindCSS kan användas om så önskas.
-    - För varje klick på "Lägg till ruta" ska en slumpmässigt färgad ruta läggas till.
+- `GET /squares`  
+  Returns the current layout of squares from `squares.json`.  
+  **Returns 400** if the file doesn't exist.
 
-2. **Backend**:
-    - Ett API byggs med .NET/C#.
-    - Vid varje knapptryckning ska position och färg på rutan sparas ner i en JSON-fil via API:et.
-    - När webbsidan laddas om, ska det tidigare tillståndet återläsas från API:et för att bibehålla state.
+- `POST /square/create`  
+  Creates a new square with a unique color and a calculated position based on a spiral logic. The square is saved to `squares.json`.
 
-## Teknisk stack
+  - If no square is passed, starts at `0,0`.
+  - Each new square spirals out from the last.
+  - Ensures no two consecutive squares have the same color.
 
-- **Frontend**: React.js
-- **Backend**: .NET/C#
-- **Lagring**: JSON-fil via .NET API
+- `POST /square/destroy`  
+  Deletes the `squares.json` file, effectively resetting the layout.
 
-## Flöde
+### 📁 Data Format (in `squares.json`)
 
-- En användare klickar på "Lägg till ruta", vilket triggar en händelse i React-applikationen som genererar en ny kvadrat.
-- Varje ruta får en slumpmässig färg som inte är samma som föregående ruta.
-- Position och färg på varje ruta skickas till API:et som sparar dessa värden till disk i JSON-format.
-- När sidan laddas om, hämtar webbsidan den senaste layouten från API:et och återställer de genererade rutorna.
+Each square is saved as a JSON object with this format:
 
-## Krav
+```json
+{
+  "square": "x,y",
+  "color": "#rrggbb"
+}
+```
 
-- **React.js**: Applikationen ska kunna rendera kvadrater dynamiskt på sidan.
-- **.NET/C# API**: Hantering av state (spara och läsa in data från en JSON-fil).
-- **Inga CSS-ramverk krävs**, men TailwindCSS kan användas om önskas.
+# 🛠 How to Run
 
-## FAQ
+## Backend
 
-### Var ska koden sparas?
-Koden ska sparas på ett publikt Github-repository.
+```
+cd backend
+dotnet run
+```
 
-### Kan jag använda AI-verktyg?
-Absolut! Använd gärna verktyg som ChatGPT och Github Copilot för att underlätta din utveckling, men var beredd på att förklara dina val.
+## Frontend
 
-### Måste jag driftsätta lösningen?
-Nej, det räcker med att köra den lokalt.
-
----
-
-Lycka till med uppgiften! Om du har några frågor eller stöter på problem, tveka inte att höra av dig.
+```
+cd frontend
+npm install
+npm start
+```
