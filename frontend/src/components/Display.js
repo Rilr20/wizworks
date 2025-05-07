@@ -17,7 +17,7 @@ const Display = ({ width, height, colour, pos }) => {
         border: `3px solid #${inverted}`
     };
 
-    return <div style={styles}>{pos}</div>;
+    return <div style={styles}></div>;
 };
 
 export default Display;
