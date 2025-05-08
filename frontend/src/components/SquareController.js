@@ -11,8 +11,8 @@ export default function SquareController({ onAdd, onClear }) {
 
     return (
         <div>
-            <button onClick={handleAdd}>Add Square</button>
-            <button onClick={handleClear}>Clear Squares</button>
+            <button class="button" onClick={handleAdd}>Add Square</button>
+            <button class="button" onClick={handleClear}>Clear Squares</button>
         </div>
     );
 };
