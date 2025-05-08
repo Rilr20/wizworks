@@ -73,9 +73,7 @@ function App() {
       <h1>Squares Grid</h1>
       <SquareController onAdd={handleAddSquare} onClear={handleClearSquares} />
       <div className="grid">
-        {squares.map((square, index) => (
-          <Display key={index} width={100} height={100} colour={square.color} pos={square.square} />
-        ))}
+        <Display squares={squares} width={100} height={100} />
       </div>
     </div>
   );
