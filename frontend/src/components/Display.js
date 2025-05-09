@@ -13,22 +13,17 @@ export default function Display({ squares, width, height }) {
 
         sortedSquares.forEach(({ square, color }, index) => {
             const [x, y] = square.split(",").map(Number);
-            console.log(index);
 
             if (!rows[y]) {
-                console.log(rows[y]);
                 rows[y] = []
 
             }
             rows[y].push({ x, y, color })
         })
-        function addBuffers(firstRow, lastRow, squares) {
-            console.log(lastRow);
+        function addBuffers(firstRow, lastRow) {
 
             let y = lastRow[0].y;
             let x = Math.min(...lastRow.map(s => s.x));
-            console.log(x);
-            console.log(y);
 
             if (firstRow.length !== lastRow.length && x - 1 >= 0) {
                 let idx = 1;
@@ -66,12 +61,3 @@ export default function Display({ squares, width, height }) {
 
     }
 }
-
-
-// const Display = ({ squares, width, height }) => {
-
-    
-
-// };
-
-// export default Display;
