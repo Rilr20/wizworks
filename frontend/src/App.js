@@ -73,7 +73,7 @@ function App() {
       <h1>Squares Grid</h1>
       <SquareController onAdd={handleAddSquare} onClear={handleClearSquares} />
       <div className="grid">
-        <Display squares={squares} width={100} height={100} />
+        <Display squares={squares} width={40} height={40} />
       </div>
     </div>
   );
