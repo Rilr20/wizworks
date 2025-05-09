@@ -42,23 +42,23 @@ export default function Display({ squares, width, height }) {
 
         const sortedRowKeys = Object.keys(rows).map(Number).sort((a, b) => a - b);
         return <div style={{ display: "flex", flexDirection: "column",}}>
-            {sortedRowKeys.map((y) => (
-                <div style={{ display: "flex",  }}>
-                    {rows[y]
-                        .sort((a, b) => a.x - b.x)
-                        .map(({ x, color }, i) => (
-                            <div
-                                style={{
-                                    width: "40px",
-                                    height: "40px",
-                                    margin: "5px",
-                                    backgroundColor: color,
-                                    border: color != "" ? "1px solid black" : "1px solid white"
-                                }}
-                            ></div>
-                        ))}
-                </div>
-            ))}
+                {sortedRowKeys.map((y) => (
+                    <div style={{ display: "grid", gridTemplateColumns: `repeat(${rows[0].length}, ${width + 5 + "px"})`, justifyContent:"center" }}>
+                        {rows[y]
+                            .sort((a, b) => a.x - b.x)
+                            .map(({ x, color }, i) => (
+                                <div
+                                    style={{
+                                        width: width,
+                                        height: height,
+                                        margin: "5px",
+                                        backgroundColor: color,
+                                        border: color != "" ? "1px solid black" : "1px solid white"
+                                    }}
+                                ></div>
+                            ))}
+                    </div>
+                ))}
         </div>
 
     } catch (error) {
