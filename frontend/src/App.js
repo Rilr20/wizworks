@@ -26,7 +26,7 @@ function App() {
   const handleAddSquare = async () => {
     let newSquare
     if (squares.length !== 0) {
-      const latest = squares[squares.length - 1];
+      newSquare = squares[squares.length - 1];
 
     } else {
       newSquare = { square: "", color: "" };
